@@ -274,4 +274,5 @@ app.add_handler(CommandHandler("actifs", actifs))
 app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
 
 print("✅ Bot OCR actif")
-app.run_polling()
+# app.run_polling()  # désactivé pour utiliser le webhook
+
