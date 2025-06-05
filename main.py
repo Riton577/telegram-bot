@@ -2,9 +2,6 @@ from flask import Flask, request
 import json
 import random
 
-with open("codes_valides.json", "w") as f:
-    f.write("{}")
-
 app = Flask(__name__)
 
 @app.route('/')
