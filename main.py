@@ -1,8 +1,11 @@
 from flask import Flask, request
 import json
 import random
+import os
 
 app = Flask(__name__)
+
+TOKEN = os.getenv("TOKEN")
 
 @app.route('/')
 def index():
