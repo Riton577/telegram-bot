@@ -1,30 +1,11 @@
-from flask import Flask, request
-import json
-import random
+import os
+from main import app
 
-app = Flask(__name__)
-
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    data = request.form
-    email = data.get('email')
-
-    # Générer un code aléatoire
-    code = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', k=6))
-
-    try:
-        with open("codes_valides.json", "r") as f:
-            codes = json.load(f)
-    except:
-        codes = {}
-
-    codes[code] = True
-
-    with open("codes_valides.json", "w") as f:
-        json.dump(codes, f)
-
-    print(f"✅ Code généré pour {email} : {code}")
-    return '', 200
+WEBHOOK_URL = "https://telegram-bot-79kl.onrender.com"  # ← Ton lien Render ici
 
 if __name__ == "__main__":
-    app.run()
+    app.run_webhook(
+        listen="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000)),
+        webhook_url=WEBHOOK_URL
+    )
