@@ -1,40 +1,31 @@
 from flask import Flask, request
-import json
-import random
+import requests
 import os
 
 app = Flask(__name__)
+TOKEN = os.getenv("TELEGRAM_TOKEN")
 
-TOKEN = os.getenv("TOKEN")
-
-@app.route('/')
+@app.route("/")
 def index():
     return "✅ Serveur actif", 200
 
-@app.route('/webhook', methods=['POST'])
+@app.route("/webhook", methods=["POST"])
 def webhook():
-    data = request.form
-    email = data.get('email')
+    data = request.get_json()
 
-    if not email:
-        return "❌ Email non fourni", 400
+    if "message" in data:
+        chat_id = data["message"]["chat"]["id"]
+        text = data["message"].get("text", "")
 
-    # Générer un code aléatoire
-    code = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', k=6))
+        if text == "/start":
+            send_message(chat_id, "Bienvenue ! Le bot fonctionne ✅")
 
-    try:
-        with open("codes_valides.json", "r") as f:
-            codes = json.load(f)
-    except:
-        codes = {}
-
-    codes[code] = True
-
-    with open("codes_valides.json", "w") as f:
-        json.dump(codes, f)
-
-    print(f"✅ Code généré pour {email} : {code}")
     return "OK", 200
+
+def send_message(chat_id, text):
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+    payload = {"chat_id": chat_id, "text": text}
+    requests.post(url, json=payload)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
